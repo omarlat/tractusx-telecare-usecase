@@ -1,0 +1,8 @@
+{
+  "aspectName": "TeleassistanceAlertAspect",
+  "semanticTypes": [
+    "fall_detected"
+  ],
+  "category": "assistential_alert",
+  "description": "Assistential alerts generated in teleassistance environments"
+}

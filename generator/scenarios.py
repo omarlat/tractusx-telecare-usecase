@@ -1,5 +1,5 @@
-from datetime import datetime, timezone
-
+import random
+from datetime import datetime, timezone, timedelta
 from models import TeleassistanceEvent
 
 

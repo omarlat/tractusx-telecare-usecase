@@ -1,0 +1,10 @@
+{
+  "aspectName": "VitalSignsAspect",
+  "semanticTypes": [
+    "oxygen_saturation",
+    "heart_rate",
+    "blood_pressure"
+  ],
+  "category": "physiological_observation",
+  "description": "Physiological observations associated with vital signs"
+}
