@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from services import (
     EVENT_STORE,
@@ -7,6 +8,14 @@ from services import (
 
 app = FastAPI(
     title="Teleassistance Synthetic Generator"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 

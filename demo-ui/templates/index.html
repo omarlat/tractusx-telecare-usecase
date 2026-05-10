@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Tractus-X Telecare Demo</title>
+</head>
+
+<body>
+
+    <h1>Tractus-X Telecare Demo</h1>
+
+    <button onclick="generateScenario()">
+    Generate Mixed Risk Scenario
+    </button>
+
+    <h2>Derived Assets</h2>
+
+    <pre id="results"></pre>
+
+    <script>
+
+        async function generateScenario() {
+
+            await fetch(
+                "http://localhost:8000/generate/mixed-risk",
+                {
+                    method: "POST"
+                }
+            )
+
+            const response = await fetch(
+                "http://localhost:8002/derived-assets"
+            )
+
+            const data = await response.json()
+
+            document.getElementById("results")
+                .textContent = JSON.stringify(data, null, 2)
+        }
+
+    </script>
+
+
+
+</body>
+
+</html>
