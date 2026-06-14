@@ -29,6 +29,7 @@ def generate_scenario(scenario_name: str):
 
         events = mixed_risk_scenario()
 
+        EVENT_STORE.clear()
         EVENT_STORE.extend(events)
 
         return events

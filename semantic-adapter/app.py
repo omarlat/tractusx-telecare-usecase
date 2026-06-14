@@ -2,9 +2,18 @@ from fastapi import FastAPI
 from services import get_semantic_events
 from services import load_vital_signs_aspect
 from services import build_fhir_observation
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="Semantic Adapter"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 

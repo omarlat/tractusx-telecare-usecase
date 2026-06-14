@@ -12,6 +12,18 @@ GENERATOR_URL = "http://localhost:8000/events"
 
 BASE_PATH = Path(__file__).parent
 
+def load_aspect(file_name):
+
+    aspect_path = (
+        BASE_PATH
+        / "aspects"
+        / file_name
+    )
+
+    with open(aspect_path, "r") as file:
+
+        return json.load(file)
+
 
 def load_vital_signs_aspect():
 
@@ -28,17 +40,25 @@ def load_vital_signs_aspect():
 
 def resolve_aspect(semantic_type: str):
 
-    aspect = load_vital_signs_aspect()
+    aspect_files = [
+        "vital-signs.aspect.json",
+        "teleassistance-alert.aspect.json",
+        "technical-event.aspect.json"
+    ]
 
-    if semantic_type in aspect["semanticTypes"]:
+    for aspect_file in aspect_files:
 
-        return aspect
+        aspect = load_aspect(aspect_file)
+
+        if semantic_type in aspect["semanticTypes"]:
+
+            return aspect
 
     return {
         "aspectName": "CommonCaseAspect",
         "semanticTypes": [],
         "category": "generic",
-        "descri ption": "Fallback aspect"
+        "description": "Fallback aspect"
     }
 
 

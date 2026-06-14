@@ -3,45 +3,83 @@
 
 <head>
     <title>Tractus-X Telecare Demo</title>
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
 <body>
 
-    <h1>Tractus-X Telecare Demo</h1>
+    <h1>Tractus-X Semantic Data Space Demonstrator</h1>
+
+    <p class="subtitle">
+        Semantic interoperability demonstration based on
+        Tractus-X concepts and HL7 FHIR transformation.
+    </p>
 
     <button onclick="generateScenario()">
     Generate Mixed Risk Scenario
     </button>
 
-    <h2>Derived Assets</h2>
+    <div class="pipeline">
 
-    <pre id="results"></pre>
+        <div class="step">
+            Synthetic Event
+        </div>
 
-    <script>
+        <div class="arrow">→</div>
 
-        async function generateScenario() {
+        <div class="step">
+            Semantic Enrichment
+        </div>
 
-            await fetch(
-                "http://localhost:8000/generate/mixed-risk",
-                {
-                    method: "POST"
-                }
-            )
+        <div class="arrow">→</div>
 
-            const response = await fetch(
-                "http://localhost:8002/derived-assets"
-            )
+        <div class="step">
+            FHIR Transformation
+        </div>
 
-            const data = await response.json()
+        <div class="arrow">→</div>
 
-            document.getElementById("results")
-                .textContent = JSON.stringify(data, null, 2)
-        }
+        <div class="step">
+            Derived Asset
+        </div>
 
-    </script>
+    </div>
 
+    <h2>Case Overview</h2>
 
+    <div id="case-overview"></div>
 
+    <div id="summary"></div>
+
+    <div class="container">
+
+        <div class="column">
+
+            <h2>Semantic Events</h2>
+
+            <div id="semantic-events"></div>
+
+        </div>
+
+        <div class="column">
+
+            <h2>FHIR Representation</h2>
+
+            <div id="fhir-events"></div>
+
+        </div>
+
+        <div class="column">
+
+            <h2>Derived Assets</h2>
+
+            <div id="results"></div>
+
+        </div>
+
+    </div>
+
+     <script src="/static/js/app.js"></script>
 </body>
 
 </html>
