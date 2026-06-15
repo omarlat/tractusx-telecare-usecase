@@ -24,17 +24,20 @@ def health():
     return load_vital_signs_aspect()
 
 
+# Eventos funcionales enriquecidos semánticamente y validados
 @app.get("/semantic-events")
 def semantic_events():
 
     return get_semantic_events()
 
 
+# Catálogo de aspectos funcionales: aspectos del registro + UnmappedEventAspect
 @app.get("/aspects")
 def aspects():
 
     return list_aspects()
 
+# Eventos semánticos serializados como recursos HL7 FHIR Observation
 @app.get("/fhir-events")
 def fhir_events():
 

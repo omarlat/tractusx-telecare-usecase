@@ -14,6 +14,8 @@ GENERATOR_URL = "http://localhost:8000/events"
 
 BASE_PATH = Path(__file__).parent
 
+# Catálogo de aspectos funcionales, en el orden en que se cargan en el
+# registro (CommonCaseAspect primero)
 ASPECT_FILES = [
     "common-case.aspect.json",
     "vital-signs.aspect.json",
@@ -23,6 +25,8 @@ ASPECT_FILES = [
     "analytical-result.aspect.json"
 ]
 
+# Aspecto de control asignado cuando un semantic_type no está mapeado
+# en ningún aspecto del catálogo
 FALLBACK_ASPECT = {
     "aspectName": "UnmappedEventAspect",
     "semanticTypes": [],
@@ -31,6 +35,7 @@ FALLBACK_ASPECT = {
 }
 
 
+# Carga un fichero de definición de aspecto desde semantic-adapter/aspects/
 def load_aspect(file_name):
 
     aspect_path = (
@@ -44,8 +49,12 @@ def load_aspect(file_name):
         return json.load(file)
 
 
+# Registro de aspectos cargado una única vez al importar el módulo,
+# en lugar de releer los ficheros JSON en cada petición
 ASPECT_REGISTRY = [load_aspect(file_name) for file_name in ASPECT_FILES]
 
+# Referencia directa a CommonCaseAspect dentro del registro, usada para
+# componer cada SemanticEvent con su aspecto común (case_id/timestamp/source)
 COMMON_CASE_ASPECT = next(
     aspect for aspect in ASPECT_REGISTRY
     if aspect["aspectName"] == "CommonCaseAspect"
@@ -65,6 +74,8 @@ def load_vital_signs_aspect():
         return json.load(file)
 
 
+# Resuelve el aspecto funcional asociado a un semantic_type recorriendo
+# el registro; si no hay coincidencia, devuelve el aspecto de control
 def resolve_aspect(semantic_type: str):
 
     for aspect in ASPECT_REGISTRY:
@@ -76,11 +87,16 @@ def resolve_aspect(semantic_type: str):
     return FALLBACK_ASPECT, True
 
 
+# Catálogo completo expuesto en GET /aspects: los aspectos del registro
+# más el aspecto de control UnmappedEventAspect
 def list_aspects():
 
     return ASPECT_REGISTRY + [FALLBACK_ASPECT]
 
 
+# Validación estructural: comprueba que el evento se ajusta al contrato
+# FunctionalEvent. Cada error de Pydantic se traduce a un mensaje legible
+# con prefijo "structural:"
 def validate_structure(raw_event: dict) -> list[str]:
 
     try:
@@ -104,8 +120,12 @@ def validate_structure(raw_event: dict) -> list[str]:
         return errors
 
 
+# Validación semántica: comprueba que el contenido del evento es coherente
+# con las reglas declaradas en el bloque "properties" del aspecto resuelto
+# por resolve_aspect
 def validate_semantics(functional_event, aspect, is_fallback) -> list[str]:
 
+    # semantic_type no mapeado a ningún aspecto del catálogo
     if is_fallback:
 
         return [
@@ -114,6 +134,7 @@ def validate_semantics(functional_event, aspect, is_fallback) -> list[str]:
 
     errors = []
 
+    # La categoría del evento debe coincidir con la del aspecto resuelto
     if functional_event.category != aspect["category"]:
 
         errors.append(
@@ -129,6 +150,8 @@ def validate_semantics(functional_event, aspect, is_fallback) -> list[str]:
 
     if rules.get("expectsValue", True):
 
+        # Eventos con magnitud asociada (p.ej. VitalSignsAspect):
+        # observed_value es obligatorio y debe respetar el rango/unidad
         if functional_event.observed_value is None:
 
             errors.append(
@@ -165,6 +188,8 @@ def validate_semantics(functional_event, aspect, is_fallback) -> list[str]:
 
     else:
 
+        # Eventos sin magnitud asociada (alertas/cambios de estado):
+        # observed_value/unit no deben estar presentes
         if functional_event.observed_value is not None or functional_event.unit is not None:
 
             errors.append(
@@ -175,6 +200,9 @@ def validate_semantics(functional_event, aspect, is_fallback) -> list[str]:
     return errors
 
 
+# Orquesta el enriquecimiento semántico completo: obtiene los eventos
+# funcionales del generador, aplica ambas validaciones, resuelve el
+# aspecto correspondiente y construye el SemanticEvent final
 def get_semantic_events():
 
     response = requests.get(GENERATOR_URL)
@@ -189,6 +217,9 @@ def get_semantic_events():
 
         if structural_errors:
 
+            # Evento estructuralmente inválido: se conserva tal cual y se
+            # omite la validación semántica (no se puede interpretar como
+            # FunctionalEvent)
             event_data = raw_event
 
             aspect = FALLBACK_ASPECT
@@ -207,6 +238,9 @@ def get_semantic_events():
 
         errors = structural_errors + semantic_errors
 
+        # model_construct evita la validación de Pydantic, permitiendo
+        # devolver también los eventos estructuralmente inválidos junto
+        # con el detalle de los errores detectados
         semantic_event = SemanticEvent.model_construct(
             **event_data,
             aspect=aspect,
@@ -222,6 +256,7 @@ def get_semantic_events():
     return semantic_events
 
 
+# Serializa un evento semántico como recurso HL7 FHIR Observation
 def build_fhir_observation(semantic_event):
 
     observation = {
@@ -256,6 +291,9 @@ def build_fhir_observation(semantic_event):
         ]
     }
 
+    # value[x] es un tipo de elección en FHIR: solo los eventos con
+    # magnitud asociada usan valueQuantity; el resto usa valueCodeableConcept
+    # como campo equivalente
     if semantic_event.observed_value is not None:
         observation["valueQuantity"] = {
             "value": semantic_event.observed_value,
