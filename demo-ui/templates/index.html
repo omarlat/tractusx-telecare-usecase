@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Tractus-X Telecare Demo</title>
+    <title>Tractus-X Semantic Data Space Demonstrator</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
@@ -16,70 +16,247 @@
     </p>
 
     <button onclick="generateScenario()">
-    Generate Mixed Risk Scenario
+        Generate Mixed Risk Scenario
     </button>
 
-    <div class="pipeline">
 
-        <div class="step">
-            Synthetic Event
+
+
+    <div class="organization-block">
+
+        <h2>Provider Organization</h2>
+
+        <div class="pipeline">
+
+<div
+    id="synthetic-step"
+    class="step provider-step"
+    onclick="showProviderStep('synthetic')"
+>
+    Synthetic Event
+</div>
+
+<div class="arrow">→</div>
+
+<div
+    id="semantic-step"
+    class="step provider-step"
+    onclick="showProviderStep('semantic')"
+>
+    Semantic Enrichment
+</div>
+
+<div class="arrow">→</div>
+
+<div
+    id="fhir-step"
+    class="step provider-step"
+    onclick="showProviderStep('fhir')"
+>
+    FHIR Transformation
+</div>
+
         </div>
 
-        <div class="arrow">→</div>
+        <div id="provider-details"></div>
 
-        <div class="step">
-            Semantic Enrichment
+        <div id="summary"></div>
+
+<div class="provider-results">
+
+    <div class="provider-column">
+
+        <h3>Case Overview</h3>
+
+        <div id="case-overview"></div>
+
+    </div>
+
+    <div class="provider-column">
+
+        <h3>Semantic Events Summary</h3>
+
+        <div id="semantic-events"></div>
+
+    </div>
+
+</div>
+
+    </div>
+
+
+    <div class="vertical-arrow">
+        ↓
+    </div>
+
+
+    <div class="organization-block">
+
+        <h2>Aspect Catalog</h2>
+
+        <div id="aspect-catalog"></div>
+
+    </div>
+
+
+    <div class="vertical-arrow">
+        ↓
+    </div>
+
+
+    <div class="organization-block dataspace">
+
+        <h2>Tractus-X Dataspace</h2>
+
+        <div class="dataspace-connectors">
+
+            <span>Provider Connector</span>
+
+            <span>↓</span>
+
+            <span>Consumer Connector</span>
+
         </div>
 
-        <div class="arrow">→</div>
+        <div class="pipeline">
 
-        <div class="step">
-            FHIR Transformation
+            <div id="asset-step" class="step edc" onclick="showDataspaceStep('asset')">
+                EDC Publication
+            </div>
+
+            <div id="catalog-step" class="step edc" onclick="showDataspaceStep('catalog')">
+                Catalog Discovery
+            </div>
+
+            <div id="contract-step" class="step edc" onclick="showDataspaceStep('contract')">
+                Contract Negotiation
+            </div>
+
+            <div id="transfer-step" class="step edc" onclick="showDataspaceStep('transfer')">
+                Data Transfer
+            </div>
+
         </div>
 
-        <div class="arrow">→</div>
+        <div class="step-details">
 
-        <div class="step">
-            Derived Asset
+            <div id="dataspace-details"></div>
+
+        </div>
+
+        <h3>EDC Exchange Status</h3>
+
+        <div id="dataspace-status">
+
+            <div class="exchange-card completed">
+                ✓ Asset Registered
+            </div>
+
+            <div class="exchange-card completed">
+                ✓ Catalog Retrieved
+            </div>
+
+            <div class="exchange-card completed">
+                ✓ Contract Negotiated
+            </div>
+
+            <div class="exchange-card completed">
+                ✓ Transfer Completed
+            </div>
+
+            <div class="exchange-card completed">
+                ✓ Asset Consumed
+            </div>
+
         </div>
 
     </div>
 
-    <h2>Case Overview</h2>
 
-    <div id="case-overview"></div>
+    <div class="vertical-arrow">
+        ↓
+    </div>
 
-    <div id="summary"></div>
 
-    <div class="container">
+    <div class="organization-block">
 
-        <div class="column">
+        <h2>Consumer Organization</h2>
 
-            <h2>Semantic Events</h2>
+        <div class="pipeline">
 
-            <div id="semantic-events"></div>
+            <div
+    id="consume-step"
+    class="step consumer-step"
+    onclick="showConsumerStep('consume')"
+>
+    Asset Consumption
+</div>
+
+<div class="arrow">→</div>
+
+<div
+    id="analytics-step"
+    class="step consumer-step"
+    onclick="showConsumerStep('analytics')"
+>
+    Analytics
+</div>
+
+<div class="arrow">→</div>
+
+<div
+    id="derived-step"
+    class="step consumer-step"
+    onclick="showConsumerStep('derived')"
+>
+    Derived Asset
+</div>
 
         </div>
 
-        <div class="column">
+        <div id="consumer-details"></div>
 
-            <h2>FHIR Representation</h2>
+        <div class="consumer-results">
 
-            <div id="fhir-events"></div>
+    <div class="consumer-column">
 
-        </div>
+        <h3>Analytics Summary</h3>
 
-        <div class="column">
+        <div class="summary-card">
 
-            <h2>Derived Assets</h2>
+    <h3>Analytics Summary</h3>
 
-            <div id="results"></div>
+    <p>
+        <strong>Processed Events:</strong> 3
+    </p>
 
-        </div>
+    <p>
+        <strong>Risk Level:</strong>
+        🔴 HIGH
+    </p>
+
+    <p>
+        <strong>Priority:</strong>
+        1
+    </p>
+
+</div>
 
     </div>
 
-     <script src="/static/js/app.js"></script>
+    <div class="consumer-column">
+
+        <h3>Derived Assets</h3>
+
+        <div id="results"></div>
+
+    </div>
+
+</div>
+
+    </div>
+
+    <script src="/static/js/app.js"></script>
 </body>
 
 </html>

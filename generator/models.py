@@ -12,13 +12,15 @@ class TeleassistanceEvent(BaseModel):
         "oxygen_saturation",
         "heart_rate",
         "fall_detected",
-        "technical_alarm"
+        "technical_alarm",
+        "functional_status_change"
     ]
 
     category: Literal[
         "physiological_observation",
         "assistential_alert",
-        "technical_event"
+        "technical_event",
+        "functional_status"
     ]
 
     observed_value: Optional[float] = None

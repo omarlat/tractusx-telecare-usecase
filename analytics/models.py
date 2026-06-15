@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 
@@ -10,3 +12,7 @@ class DerivedAsset(BaseModel):
     priority: int
 
     summary: str
+
+    generated_at: datetime
+
+    source: str

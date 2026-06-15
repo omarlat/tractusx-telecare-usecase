@@ -95,6 +95,18 @@ def mixed_risk_scenario():
             severity="medium",
             source="teleassistance_gateway",
             description="Device battery level below threshold"
+        ),
+
+        TeleassistanceEvent(
+            case_id="USR-0099",
+            timestamp=datetime.now(timezone.utc) - timedelta(minutes=random.randint(0, 30)),
+            semantic_type="functional_status_change",
+            category="functional_status",
+            observed_value=None,
+            unit=None,
+            severity="medium",
+            source="care_team_assessment",
+            description="Pérdida de movilidad reciente"
         )
 
     ]

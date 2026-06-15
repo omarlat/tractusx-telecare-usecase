@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 import requests
 
 from models import DerivedAsset
@@ -48,7 +50,9 @@ def analyze_events():
             case_id=case_id,
             risk_level=risk_level,
             priority=priority,
-            summary="Synthetic teleassistance risk evaluation"
+            summary="Synthetic teleassistance risk evaluation",
+            generated_at=datetime.now(timezone.utc),
+            source="Módulo analítico Entidad B"
         )
 
         derived_assets.append(derived_asset)

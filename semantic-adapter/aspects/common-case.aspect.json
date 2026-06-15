@@ -1,0 +1,17 @@
+{
+  "aspectName": "CommonCaseAspect",
+  "semanticTypes": [],
+  "category": "common",
+  "description": "Información común asociada al caso pseudonimizado, incluyendo identificadores y referencias temporales",
+  "properties": {
+    "case_id": {
+      "description": "Identificador pseudonimizado del caso"
+    },
+    "timestamp": {
+      "description": "Momento en el que se registra la observación o evento"
+    },
+    "source": {
+      "description": "Sistema o dispositivo que genera el dato"
+    }
+  }
+}

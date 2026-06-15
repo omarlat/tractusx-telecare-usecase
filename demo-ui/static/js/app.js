@@ -3,7 +3,8 @@ function getEventIcon(eventType) {
     const icons = {
         oxygen_saturation: "🩺",
         fall_detected: "🚨",
-        technical_alarm: "⚙"
+        technical_alarm: "⚙",
+        functional_status_change: "🚶"
     }
 
     return icons[eventType] || "📄"
@@ -30,7 +31,13 @@ function getAspectLabel(aspectName) {
 
         TechnicalEventAspect: "Technical Event",
 
-        CommonCaseAspect: "Generic Event"
+        FunctionalStatusAspect: "Functional Status",
+
+        AnalyticalResultAspect: "Analytical Result",
+
+        CommonCaseAspect: "Common Case",
+
+        UnmappedEventAspect: "Unmapped Event"
 
     }
 
@@ -48,11 +55,148 @@ function getEventDescription(eventType) {
             "🚨 Fall detected at home",
 
         technical_alarm:
-            "⚙ Technical alarm reported by device"
+            "⚙ Technical alarm reported by device",
+
+        functional_status_change:
+            "🚶 Functional status change reported"
 
     }
 
     return descriptions[eventType] || eventType
+}
+
+async function loadAspectCatalog() {
+
+    const response = await fetch(
+        "http://localhost:8001/aspects"
+    )
+
+    const aspects = await response.json()
+
+    let html = ""
+
+    aspects.forEach(aspect => {
+
+        html += `
+            <div class="card">
+                <h3>${aspect.aspectName}</h3>
+
+                <p>
+                    <strong>Category:</strong>
+                    ${aspect.category}
+                </p>
+
+                <p>
+                    ${aspect.description}
+                </p>
+
+                <p>
+                    <strong>Semantic types:</strong>
+                    ${
+                        aspect.semanticTypes.length
+                            ? aspect.semanticTypes.join(", ")
+                            : "—"
+                    }
+                </p>
+            </div>
+        `
+    })
+
+    document.getElementById("aspect-catalog").innerHTML = html
+}
+
+function showDataspaceStep(step) {
+
+    document
+        .querySelectorAll(".edc")
+        .forEach(el => el.classList.remove("active"))
+
+    document
+        .getElementById(step + "-step")
+        .classList.add("active")
+
+    const details = {
+
+        asset: `
+            <h3>EDC Publication</h3>
+
+            <p>
+                <strong>Purpose:</strong>
+                Register the Telecare FHIR Asset.
+            </p>
+
+            <p>
+                <strong>Asset:</strong>
+                telecare-fhir-asset
+            </p>
+
+            <p>
+                <strong>Content Type:</strong>
+                application/json
+            </p>
+        `,
+
+        catalog: `
+            <h3>Catalog Discovery</h3>
+
+            <p>
+                <strong>Purpose:</strong>
+                Discover assets available from the provider.
+            </p>
+
+            <p>
+                <strong>Endpoint:</strong>
+                POST /catalog/request
+            </p>
+
+            <p>
+                <strong>Result:</strong>
+                Telecare FHIR Asset discovered.
+            </p>
+        `,
+
+        contract: `
+            <h3>Contract Negotiation</h3>
+
+            <p>
+                <strong>Purpose:</strong>
+                Establish a data sharing agreement.
+            </p>
+
+            <p>
+                <strong>Endpoint:</strong>
+                POST /contractnegotiations
+            </p>
+
+            <p>
+                <strong>Result:</strong>
+                Contract agreement created.
+            </p>
+        `,
+
+        transfer: `
+            <h3>Data Transfer</h3>
+
+            <p>
+                <strong>Purpose:</strong>
+                Transfer the asset to the consumer.
+            </p>
+
+            <p>
+                <strong>Endpoint:</strong>
+                POST /transferprocesses
+            </p>
+
+            <p>
+                <strong>Result:</strong>
+                Asset successfully consumed.
+            </p>
+        `
+    }
+
+    document
+        .getElementById("dataspace-details")
+        .innerHTML = details[step]
 }
 
 async function generateScenario() {
@@ -92,6 +236,16 @@ async function generateScenario() {
 
                 <p>
                     ${asset.summary}
+                </p>
+
+                <p>
+                    <strong>Generated at:</strong>
+                    ${asset.generated_at}
+                </p>
+
+                <p>
+                    <strong>Source:</strong>
+                    ${asset.source}
                 </p>
             </div>
         `
@@ -174,6 +328,14 @@ async function generateScenario() {
                 }
             </p>
 
+            ${
+                event.validation_errors.length
+                    ? `<ul class="validation-errors">${
+                        event.validation_errors.map(error => `<li>${error}</li>`).join("")
+                    }</ul>`
+                    : ""
+            }
+
         </div>
         `
     })
@@ -190,6 +352,10 @@ async function generateScenario() {
 
     fhirData.forEach(resource => {
 
+        const value = resource.valueQuantity
+            ? `${resource.valueQuantity.value} ${resource.valueQuantity.unit || ""}`.trim()
+            : resource.valueCodeableConcept.text
+
         fhirHtml += `
             <div class="card">
 
@@ -205,6 +371,36 @@ async function generateScenario() {
                     ${resource.status}
                 </p>
 
+                <p>
+                    <strong>Category:</strong>
+                    ${resource.category[0].text}
+                </p>
+
+                <p>
+                    <strong>Effective:</strong>
+                    ${resource.effectiveDateTime}
+                </p>
+
+                <p>
+                    <strong>Value:</strong>
+                    ${value}
+                </p>
+
+                <p>
+                    <strong>Interpretation:</strong>
+                    ${resource.interpretation[0].text}
+                </p>
+
+                <p>
+                    <strong>Device:</strong>
+                    ${resource.device.display}
+                </p>
+
+                <p>
+                    <strong>Note:</strong>
+                    ${resource.note[0].text}
+                </p>
+
             </div>
         `
     })
@@ -217,3 +413,163 @@ async function generateScenario() {
         </h3>
     `
 }
+
+function showConsumerStep(step) {
+
+    document
+        .querySelectorAll(".consumer-step")
+        .forEach(el => el.classList.remove("active"))
+
+    document
+        .getElementById(step + "-step")
+        .classList.add("active")
+
+    const details = {
+
+        consume: `
+            <h3>Asset Consumption</h3>
+
+            <p>
+                <strong>Purpose:</strong>
+                Receive the Telecare FHIR Asset from the dataspace.
+            </p>
+
+            <p>
+                <strong>Input:</strong>
+                HL7 FHIR Observation resources.
+            </p>
+
+            <p>
+                <strong>Result:</strong>
+                Asset available for analysis.
+            </p>
+        `,
+
+        analytics: `
+            <h3>Analytics Processing</h3>
+
+            <p>
+                <strong>Purpose:</strong>
+                Evaluate teleassistance events.
+            </p>
+
+            <p>
+                <strong>Rules applied:</strong>
+            </p>
+
+            <ul>
+                <li>Low oxygen saturation</li>
+                <li>Fall detection</li>
+                <li>Technical alarm evaluation</li>
+            </ul>
+
+            <p>
+                <strong>Output:</strong>
+                HIGH risk level and priority 1.
+            </p>
+        `,
+
+        derived: `
+            <h3>Derived Asset Generation</h3>
+
+            <p>
+                <strong>Generated asset:</strong>
+            </p>
+
+            <pre>
+{
+  "caseId": "USR-0099",
+  "riskLevel": "HIGH",
+  "priority": 1,
+  "summary": "Preventive intervention recommended"
+}
+            </pre>
+        `
+    }
+
+    document
+        .getElementById("consumer-details")
+        .innerHTML = details[step]
+}
+
+function showProviderStep(step) {
+
+    document
+        .querySelectorAll(".provider-step")
+        .forEach(el => el.classList.remove("active"))
+
+    document
+        .getElementById(step + "-step")
+        .classList.add("active")
+
+    const details = {
+
+        synthetic: `
+<pre>{
+  "case_id": "USR-0099",
+  "semantic_type": "oxygen_saturation",
+  "observed_value": 89,
+  "unit": "%",
+  "severity": "high"
+}</pre>
+        `,
+
+        semantic: `
+<pre>{
+  "case_id": "USR-0099",
+  "semantic_type": "oxygen_saturation",
+  "observed_value": 89,
+  "unit": "%",
+  "severity": "high",
+  "aspect": {
+    "aspectName": "VitalSignsAspect"
+  },
+  "semantic_context": "Tractus-X Telecare Demo",
+  "semantic_version": "1.0.0",
+  "validation_status": "valid"
+}</pre>
+        `,
+
+        fhir: `
+<pre>{
+  "resourceType": "Observation",
+  "status": "final",
+  "code": {
+    "text": "oxygen_saturation"
+  },
+  "category": [
+    { "text": "physiological_observation" }
+  ],
+  "subject": {
+    "reference": "USR-0099"
+  },
+  "effectiveDateTime": "2026-06-15T08:42:00+00:00",
+  "valueQuantity": {
+    "value": 89,
+    "unit": "%"
+  },
+  "interpretation": [
+    { "text": "high" }
+  ],
+  "device": {
+    "display": "home_oximeter"
+  },
+  "note": [
+    { "text": "Low oxygen saturation detected" }
+  ]
+}</pre>
+        `
+    }
+
+    document
+        .getElementById("provider-details")
+        .innerHTML = details[step]
+}
+
+showDataspaceStep("asset")
+
+showConsumerStep("consume")
+
+showProviderStep("synthetic")
+
+loadAspectCatalog()

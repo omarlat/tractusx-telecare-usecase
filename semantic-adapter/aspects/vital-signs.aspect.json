@@ -6,5 +6,22 @@
     "blood_pressure"
   ],
   "category": "physiological_observation",
-  "description": "Physiological observations associated with vital signs"
+  "description": "Physiological observations associated with vital signs",
+  "properties": {
+    "oxygen_saturation": {
+      "unit": "%",
+      "min": 0,
+      "max": 100
+    },
+    "heart_rate": {
+      "unit": "bpm",
+      "min": 30,
+      "max": 250
+    },
+    "blood_pressure": {
+      "unit": "mmHg",
+      "min": 40,
+      "max": 250
+    }
+  }
 }

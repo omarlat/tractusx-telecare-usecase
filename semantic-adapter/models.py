@@ -33,8 +33,12 @@ class SemanticEvent(FunctionalEvent):
 
     aspect: dict
 
+    common_case_aspect: dict
+
     semantic_context: str
 
     semantic_version: str
 
     validation_status: str
+
+    validation_errors: list[str] = []

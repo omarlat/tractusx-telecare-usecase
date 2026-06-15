@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from services import get_semantic_events
 from services import load_vital_signs_aspect
 from services import build_fhir_observation
+from services import list_aspects
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
@@ -27,6 +28,12 @@ def health():
 def semantic_events():
 
     return get_semantic_events()
+
+
+@app.get("/aspects")
+def aspects():
+
+    return list_aspects()
 
 @app.get("/fhir-events")
 def fhir_events():

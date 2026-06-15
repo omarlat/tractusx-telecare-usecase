@@ -1,0 +1,13 @@
+{
+  "aspectName": "FunctionalStatusAspect",
+  "semanticTypes": [
+    "functional_status_change"
+  ],
+  "category": "functional_status",
+  "description": "Información relacionada con cambios en el estado funcional de la persona usuaria",
+  "properties": {
+    "functional_status_change": {
+      "expectsValue": false
+    }
+  }
+}

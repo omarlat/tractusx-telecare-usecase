@@ -1,0 +1,26 @@
+{
+  "aspectName": "AnalyticalResultAspect",
+  "semanticTypes": [],
+  "category": "analytical_result",
+  "description": "Resultados derivados del procesamiento y análisis realizado sobre los activos previamente compartidos",
+  "properties": {
+    "case_id": {
+      "description": "Identificador pseudonimizado del caso"
+    },
+    "risk_level": {
+      "description": "Clasificación de riesgo derivada del análisis"
+    },
+    "priority": {
+      "description": "Prioridad asociada al resultado analítico"
+    },
+    "summary": {
+      "description": "Justificación resumida del resultado generado"
+    },
+    "generated_at": {
+      "description": "Fecha o instante de generación del resultado"
+    },
+    "source": {
+      "description": "Entidad o módulo que produce el activo derivado"
+    }
+  }
+}
