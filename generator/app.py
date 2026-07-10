@@ -51,5 +51,8 @@ def get_scenarios():
     return [
         "low-oxygen",
         "fall-alert",
-        "mixed-risk"
+        "mixed-risk",
+        "low-risk",
+        "medium-risk",
+        "high-risk"
     ]

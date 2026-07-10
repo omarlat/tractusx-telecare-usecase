@@ -1,0 +1,72 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "generator :8000",
+      "type": "shell",
+      "command": "${workspaceFolder}\\.venv\\Scripts\\Activate.ps1; python -m uvicorn app:app --reload --port 8000",
+      "options": {
+        "cwd": "${workspaceFolder}\\generator"
+      },
+      "presentation": {
+        "label": "generator :8000",
+        "panel": "new",
+        "group": "telecare"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "semantic-adapter :8001",
+      "type": "shell",
+      "command": "${workspaceFolder}\\.venv\\Scripts\\Activate.ps1; python -m uvicorn app:app --reload --port 8001",
+      "options": {
+        "cwd": "${workspaceFolder}\\semantic-adapter"
+      },
+      "presentation": {
+        "label": "semantic-adapter :8001",
+        "panel": "new",
+        "group": "telecare"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "analytics :8002",
+      "type": "shell",
+      "command": "${workspaceFolder}\\.venv\\Scripts\\Activate.ps1; python -m uvicorn app:app --reload --port 8002",
+      "options": {
+        "cwd": "${workspaceFolder}\\analytics"
+      },
+      "presentation": {
+        "label": "analytics :8002",
+        "panel": "new",
+        "group": "telecare"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "demo-ui :8003",
+      "type": "shell",
+      "command": "${workspaceFolder}\\.venv\\Scripts\\Activate.ps1; python -m uvicorn app:app --reload --port 8003",
+      "options": {
+        "cwd": "${workspaceFolder}\\demo-ui"
+      },
+      "presentation": {
+        "label": "demo-ui :8003",
+        "panel": "new",
+        "group": "telecare"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Start All Services",
+      "dependsOn": [
+        "generator :8000",
+        "semantic-adapter :8001",
+        "analytics :8002",
+        "demo-ui :8003"
+      ],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    }
+  ]
+}

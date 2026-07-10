@@ -106,7 +106,135 @@ def mixed_risk_scenario():
             unit=None,
             severity="medium",
             source="care_team_assessment",
-            description="Pérdida de movilidad reciente"
+            description="Recent loss of mobility reported"
         )
 
+    ]
+
+
+def low_risk_scenario():
+
+    return [
+        TeleassistanceEvent(
+            case_id="USR-0021",
+            timestamp=datetime.now(timezone.utc) - timedelta(minutes=random.randint(0, 30)),
+            semantic_type="oxygen_saturation",
+            category="physiological_observation",
+            observed_value=round(random.uniform(96.0, 99.0), 1),
+            unit="%",
+            severity="low",
+            source="home_oximeter",
+            description="Oxygen saturation within normal range"
+        ),
+        TeleassistanceEvent(
+            case_id="USR-0021",
+            timestamp=datetime.now(timezone.utc),
+            semantic_type="heart_rate",
+            category="physiological_observation",
+            observed_value=random.randint(62, 80),
+            unit="bpm",
+            severity="low",
+            source="smart_watch",
+            description="Heart rate within normal range"
+        )
+    ]
+
+
+def medium_risk_scenario():
+
+    return [
+        TeleassistanceEvent(
+            case_id="USR-0055",
+            timestamp=datetime.now(timezone.utc) - timedelta(minutes=random.randint(0, 30)),
+            semantic_type="oxygen_saturation",
+            category="physiological_observation",
+            observed_value=round(random.uniform(91.0, 94.0), 1),
+            unit="%",
+            severity="medium",
+            source="home_oximeter",
+            description="Slightly low oxygen saturation, monitoring required"
+        ),
+        TeleassistanceEvent(
+            case_id="USR-0055",
+            timestamp=datetime.now(timezone.utc) - timedelta(minutes=random.randint(0, 30)),
+            semantic_type="heart_rate",
+            category="physiological_observation",
+            observed_value=random.randint(88, 100),
+            unit="bpm",
+            severity="medium",
+            source="smart_watch",
+            description="Mildly elevated heart rate"
+        ),
+        TeleassistanceEvent(
+            case_id="USR-0055",
+            timestamp=datetime.now(timezone.utc),
+            semantic_type="functional_status_change",
+            category="functional_status",
+            observed_value=None,
+            unit=None,
+            severity="medium",
+            source="care_team_assessment",
+            description="Decreased daily activity level, follow-up scheduled"
+        )
+    ]
+
+
+def high_risk_scenario():
+
+    return [
+        TeleassistanceEvent(
+            case_id="USR-0077",
+            timestamp=datetime.now(timezone.utc) - timedelta(minutes=random.randint(0, 30)),
+            semantic_type="oxygen_saturation",
+            category="physiological_observation",
+            observed_value=round(random.uniform(82.0, 87.0), 1),
+            unit="%",
+            severity="high",
+            source="home_oximeter",
+            description="Critical oxygen saturation, immediate intervention required"
+        ),
+        TeleassistanceEvent(
+            case_id="USR-0077",
+            timestamp=datetime.now(timezone.utc) - timedelta(minutes=random.randint(0, 30)),
+            semantic_type="heart_rate",
+            category="physiological_observation",
+            observed_value=random.randint(118, 135),
+            unit="bpm",
+            severity="high",
+            source="smart_watch",
+            description="Tachycardia detected"
+        ),
+        TeleassistanceEvent(
+            case_id="USR-0077",
+            timestamp=datetime.now(timezone.utc) - timedelta(minutes=random.randint(0, 30)),
+            semantic_type="fall_detected",
+            category="assistential_alert",
+            observed_value=None,
+            unit=None,
+            severity="high",
+            source="home_sensor",
+            description="Fall detected, user unresponsive to intercom"
+        ),
+        TeleassistanceEvent(
+            case_id="USR-0077",
+            timestamp=datetime.now(timezone.utc) - timedelta(minutes=random.randint(0, 30)),
+            semantic_type="technical_alarm",
+            category="technical_event",
+            observed_value=None,
+            unit=None,
+            severity="high",
+            source="teleassistance_gateway",
+            description="Gateway disconnected, communication link lost"
+        ),
+        TeleassistanceEvent(
+            case_id="USR-0077",
+            timestamp=datetime.now(timezone.utc),
+            semantic_type="functional_status_change",
+            category="functional_status",
+            observed_value=None,
+            unit=None,
+            severity="high",
+            source="care_team_assessment",
+            description="Acute functional deterioration, emergency protocol activated"
+        )
     ]

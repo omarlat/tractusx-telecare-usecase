@@ -1,37 +1,31 @@
 from scenarios import (
     low_oxygen_scenario,
     fall_alert_scenario,
-    mixed_risk_scenario
+    mixed_risk_scenario,
+    low_risk_scenario,
+    medium_risk_scenario,
+    high_risk_scenario
 )
 
 EVENT_STORE = []
 
+SCENARIO_MAP = {
+    "low-oxygen":  low_oxygen_scenario,
+    "fall-alert":  fall_alert_scenario,
+    "mixed-risk":  mixed_risk_scenario,
+    "low-risk":    low_risk_scenario,
+    "medium-risk": medium_risk_scenario,
+    "high-risk":   high_risk_scenario,
+}
+
 
 def generate_scenario(scenario_name: str):
 
-    if scenario_name == "low-oxygen":
+    fn = SCENARIO_MAP.get(scenario_name)
 
-        events = low_oxygen_scenario()
+    if fn is None:
+        return []
 
-        EVENT_STORE.extend(events)
-
-        return events
-    
-    if scenario_name == "fall-alert":
-
-        events = fall_alert_scenario()
-
-        EVENT_STORE.extend(events)
-
-        return events
-
-    if scenario_name == "mixed-risk":
-
-        events = mixed_risk_scenario()
-
-        EVENT_STORE.clear()
-        EVENT_STORE.extend(events)
-
-        return events
-
-    return []
+    events = fn()
+    EVENT_STORE.extend(events)
+    return events
