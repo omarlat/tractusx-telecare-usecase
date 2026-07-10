@@ -7,6 +7,8 @@ app = FastAPI(
     title="Telecare Analytics"
 )
 
+# CORS abierto para permitir llamadas desde la demo-ui y herramientas
+# de desarrollo sin restricción de origen
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -24,6 +26,8 @@ def health():
     }
 
 
+# Ejecuta el análisis sobre los eventos semánticos actuales y devuelve
+# un DerivedAsset por cada caso presente en el EVENT_STORE del generator
 @app.get("/derived-assets")
 def derived_assets():
 

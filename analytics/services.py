@@ -5,11 +5,15 @@ import requests
 from models import DerivedAsset
 
 
+# URL del semantic-adapter: el análisis parte de los eventos ya
+# enriquecidos semánticamente, no directamente del generator
 SEMANTIC_EVENTS_URL = (
     "http://localhost:8001/semantic-events"
 )
 
 
+# Obtiene los eventos semánticos, los agrupa por caso y genera un
+# DerivedAsset por caso con su clasificación de riesgo y prioridad.
 def analyze_events():
 
     response = requests.get(
@@ -18,6 +22,7 @@ def analyze_events():
 
     semantic_events = response.json()
 
+    # Agrupación por case_id para analizar cada caso de forma independiente
     grouped_cases = {}
 
     for event in semantic_events:
@@ -34,30 +39,32 @@ def analyze_events():
 
     for case_id, events in grouped_cases.items():
 
+        # Clasificación de los eventos del caso por nivel de severidad
         events_by_severity = {"high": [], "medium": [], "low": []}
 
         for event in events:
 
             events_by_severity[event["severity"]].append(event)
 
+        # El nivel de riesgo del caso lo determina la severidad más alta
+        # presente; la prioridad sigue el mismo orden descendente (1 = máxima)
         if events_by_severity["high"]:
 
             risk_level = "high"
-
             priority = 1
 
         elif events_by_severity["medium"]:
 
             risk_level = "medium"
-
             priority = 2
 
         else:
 
             risk_level = "low"
-
             priority = 3
 
+        # Tipos semánticos que justifican el nivel de riesgo asignado,
+        # deduplicados y ordenados para reproducibilidad del resumen
         driving_types = sorted({
             event["semantic_type"]
             for event in events_by_severity[risk_level]

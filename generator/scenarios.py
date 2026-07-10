@@ -3,6 +3,9 @@ from datetime import datetime, timezone, timedelta
 from models import TeleassistanceEvent
 
 
+# Escenario de baja saturación de oxígeno.
+# Simula la detección de valores anómalos de SpO2 acompañados
+# de información fisiológica complementaria (frecuencia cardíaca).
 def low_oxygen_scenario():
 
     return [
@@ -30,6 +33,10 @@ def low_oxygen_scenario():
         )
     ]
 
+
+# Escenario de detección de caída.
+# Representa una situación asistencial en la que sensores domiciliarios
+# detectan una caída, acompañada del registro de frecuencia cardíaca.
 def fall_alert_scenario():
 
     return [
@@ -57,6 +64,10 @@ def fall_alert_scenario():
         )
     ]
 
+
+# Escenario de riesgo combinado.
+# Combina eventos fisiológicos, asistenciales y técnicos dentro del mismo
+# caso para validar situaciones de mayor complejidad y riesgo simultáneo.
 def mixed_risk_scenario():
 
     return [
@@ -112,6 +123,9 @@ def mixed_risk_scenario():
     ]
 
 
+# Escenario de riesgo bajo.
+# Incluye únicamente observaciones fisiológicas dentro de parámetros
+# normales; no se generan alertas ni eventos técnicos.
 def low_risk_scenario():
 
     return [
@@ -140,6 +154,9 @@ def low_risk_scenario():
     ]
 
 
+# Escenario de riesgo medio.
+# Incorpora incidencias moderadas que requieren seguimiento pero
+# no desencadenan intervención inmediata.
 def medium_risk_scenario():
 
     return [
@@ -179,6 +196,9 @@ def medium_risk_scenario():
     ]
 
 
+# Escenario de riesgo alto.
+# Agrupa múltiples eventos críticos de distintas categorías que
+# desencadenan la generación de activos derivados con máxima prioridad.
 def high_risk_scenario():
 
     return [
