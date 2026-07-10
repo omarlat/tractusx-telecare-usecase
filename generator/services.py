@@ -32,6 +32,9 @@ def generate_scenario(scenario_name: str):
     if fn is None:
         return []
 
+    # Cada generación reemplaza el estado anterior: la demo muestra
+    # siempre un único escenario activo, no un histórico acumulado
+    EVENT_STORE.clear()
     events = fn()
     EVENT_STORE.extend(events)
     return events

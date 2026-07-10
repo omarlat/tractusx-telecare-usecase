@@ -6,7 +6,7 @@
     "blood_pressure"
   ],
   "category": "physiological_observation",
-  "description": "Physiological observations associated with vital signs",
+  "description": "Observaciones fisiológicas asociadas a los signos vitales",
   "properties": {
     "oxygen_saturation": {
       "unit": "%",

@@ -4,7 +4,7 @@
     "fall_detected"
   ],
   "category": "assistential_alert",
-  "description": "Assistential alerts generated in teleassistance environments",
+  "description": "Alertas asistenciales generadas en entornos de teleasistencia",
   "properties": {
     "fall_detected": {
       "expectsValue": false

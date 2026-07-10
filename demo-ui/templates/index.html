@@ -8,6 +8,13 @@
 
 <body>
 
+    <div id="loading-overlay">
+        <div id="loading-box">
+            <div id="loading-spinner"></div>
+            <p>Generando escenario...</p>
+        </div>
+    </div>
+
     <h1>Tractus-X Semantic Data Space Demonstrator</h1>
 
     <p class="subtitle">
@@ -15,9 +22,19 @@
         Tractus-X concepts and HL7 FHIR transformation.
     </p>
 
-    <button onclick="generateScenario()">
-        Generate Mixed Risk Scenario
-    </button>
+    <div class="scenario-selector">
+        <select id="scenario-select">
+            <option value="low-oxygen">Baja saturación de oxígeno</option>
+            <option value="fall-alert">Detección de caída</option>
+            <option value="mixed-risk" selected>Riesgo combinado</option>
+            <option value="low-risk">Riesgo bajo</option>
+            <option value="medium-risk">Riesgo medio</option>
+            <option value="high-risk">Riesgo alto</option>
+        </select>
+        <button onclick="generateScenario()">
+            Generar escenario
+        </button>
+    </div>
 
 
 
@@ -92,9 +109,14 @@
 
     <div class="organization-block">
 
-        <h2>Aspect Catalog</h2>
+        <h2 class="catalog-toggle" onclick="toggleAspectCatalog()">
+            Aspect Catalog
+            <span id="catalog-arrow">▶</span>
+        </h2>
 
-        <div id="aspect-catalog"></div>
+        <div id="aspect-catalog-content" class="catalog-hidden">
+            <div id="aspect-catalog"></div>
+        </div>
 
     </div>
 
@@ -222,25 +244,9 @@
 
         <h3>Analytics Summary</h3>
 
-        <div class="summary-card">
-
-    <h3>Analytics Summary</h3>
-
-    <p>
-        <strong>Processed Events:</strong> 3
-    </p>
-
-    <p>
-        <strong>Risk Level:</strong>
-        🔴 HIGH
-    </p>
-
-    <p>
-        <strong>Priority:</strong>
-        1
-    </p>
-
-</div>
+        <div id="analytics-summary" class="summary-card">
+            <p style="color:#999">Genera un escenario para ver los datos.</p>
+        </div>
 
     </div>
 

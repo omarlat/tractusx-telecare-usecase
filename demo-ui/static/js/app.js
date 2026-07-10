@@ -1,3 +1,9 @@
+// Datos reales de la última generación, usados por showProviderStep y showConsumerStep
+let lastRawEvents = null
+let lastSemanticEvents = null
+let lastFhirEvents = null
+let lastDerivedAssets = null
+
 function getEventIcon(eventType) {
 
     const icons = {
@@ -65,6 +71,50 @@ function getEventDescription(eventType) {
     return descriptions[eventType] || eventType
 }
 
+function toggleAspectCatalog() {
+
+    const content = document.getElementById("aspect-catalog-content")
+    const arrow = document.getElementById("catalog-arrow")
+    const isHidden = content.classList.contains("catalog-hidden")
+
+    content.classList.toggle("catalog-hidden")
+    arrow.textContent = isHidden ? "▼" : "▶"
+}
+
+function renderAspectProperties(properties) {
+
+    if (!properties || Object.keys(properties).length === 0) {
+        return ""
+    }
+
+    let rows = ""
+
+    for (const [key, rules] of Object.entries(properties)) {
+
+        let meta = ""
+
+        if (rules.unit !== undefined) {
+            meta += `${rules.unit}`
+            if (rules.min !== undefined && rules.max !== undefined) {
+                meta += ` &nbsp;[${rules.min} – ${rules.max}]`
+            }
+        } else if (rules.expectsValue === false) {
+            meta = "cualitativo"
+        } else if (rules.description) {
+            meta = rules.description
+        }
+
+        rows += `
+            <div class="aspect-property-row">
+                <span class="prop-name">${key}</span>
+                <span class="prop-meta">${meta}</span>
+            </div>
+        `
+    }
+
+    return `<div class="aspect-properties">${rows}</div>`
+}
+
 async function loadAspectCatalog() {
 
     const response = await fetch(
@@ -73,7 +123,7 @@ async function loadAspectCatalog() {
 
     const aspects = await response.json()
 
-    let html = ""
+    let html = `<div class="catalog-grid">`
 
     aspects.forEach(aspect => {
 
@@ -82,25 +132,22 @@ async function loadAspectCatalog() {
                 <h3>${aspect.aspectName}</h3>
 
                 <p>
-                    <strong>Category:</strong>
-                    ${aspect.category}
+                    <strong>Categoría:</strong> ${aspect.category}
                 </p>
 
-                <p>
-                    ${aspect.description}
-                </p>
+                <p>${aspect.description}</p>
 
                 <p>
-                    <strong>Semantic types:</strong>
-                    ${
-                        aspect.semanticTypes.length
-                            ? aspect.semanticTypes.join(", ")
-                            : "—"
-                    }
+                    <strong>Tipos semánticos:</strong>
+                    ${aspect.semanticTypes.length ? aspect.semanticTypes.join(", ") : "—"}
                 </p>
+
+                ${renderAspectProperties(aspect.properties)}
             </div>
         `
     })
+
+    html += `</div>`
 
     document.getElementById("aspect-catalog").innerHTML = html
 }
@@ -201,18 +248,48 @@ function showDataspaceStep(step) {
 
 async function generateScenario() {
 
-    await fetch(
-        "http://localhost:8000/generate/mixed-risk",
-        {
-            method: "POST"
-        }
+    const overlay = document.getElementById("loading-overlay")
+    overlay.classList.add("visible")
+
+    try {
+
+    const scenario = document.getElementById("scenario-select").value
+
+    const generateResponse = await fetch(
+        `http://localhost:8000/generate/${scenario}`,
+        { method: "POST" }
     )
+
+    lastRawEvents = await generateResponse.json()
 
     const response = await fetch(
         "http://localhost:8002/derived-assets"
     )
 
-    const data = await response.json()
+    lastDerivedAssets = await response.json()
+
+    const data = lastDerivedAssets
+
+    const asset0 = data[0]
+
+    document.getElementById("analytics-summary").innerHTML = `
+        <p>
+            <strong>Caso:</strong> ${asset0.case_id}
+        </p>
+        <p>
+            <strong>Eventos procesados:</strong> ${lastRawEvents.length}
+        </p>
+        <p>
+            <strong>Nivel de riesgo:</strong>
+            <span class="risk-${asset0.risk_level}">
+                ${getRiskLabel(asset0.risk_level)}
+            </span>
+        </p>
+        <p>
+            <strong>Prioridad:</strong> ${asset0.priority}
+        </p>
+        <p>${asset0.summary}</p>
+    `
 
     let html = ""
 
@@ -257,9 +334,11 @@ async function generateScenario() {
         "http://localhost:8001/semantic-events"
     )
 
-    const semanticData = await semanticResponse.json()
+    lastSemanticEvents = await semanticResponse.json()
 
-        const caseId = semanticData[0].case_id
+    const semanticData = lastSemanticEvents
+
+    const caseId = semanticData[0].case_id
 
     const asset = data[0]
 
@@ -343,75 +422,24 @@ async function generateScenario() {
     document.getElementById("semantic-events").innerHTML = semanticHtml
 
     const fhirResponse = await fetch(
+
         "http://localhost:8001/fhir-events"
     )
 
-    const fhirData = await fhirResponse.json()
-
-    let fhirHtml = ""
-
-    fhirData.forEach(resource => {
-
-        const value = resource.valueQuantity
-            ? `${resource.valueQuantity.value} ${resource.valueQuantity.unit || ""}`.trim()
-            : resource.valueCodeableConcept.text
-
-        fhirHtml += `
-            <div class="card">
-
-                <h3>${resource.code.text}</h3>
-
-                <p>
-                    <strong>Type:</strong>
-                    ${resource.resourceType}
-                </p>
-
-                <p>
-                    <strong>Status:</strong>
-                    ${resource.status}
-                </p>
-
-                <p>
-                    <strong>Category:</strong>
-                    ${resource.category[0].text}
-                </p>
-
-                <p>
-                    <strong>Effective:</strong>
-                    ${resource.effectiveDateTime}
-                </p>
-
-                <p>
-                    <strong>Value:</strong>
-                    ${value}
-                </p>
-
-                <p>
-                    <strong>Interpretation:</strong>
-                    ${resource.interpretation[0].text}
-                </p>
-
-                <p>
-                    <strong>Device:</strong>
-                    ${resource.device.display}
-                </p>
-
-                <p>
-                    <strong>Note:</strong>
-                    ${resource.note[0].text}
-                </p>
-
-            </div>
-        `
-    })
-
-    document.getElementById("fhir-events").innerHTML = fhirHtml
+    lastFhirEvents = await fhirResponse.json()
     
     document.getElementById("summary").innerHTML = `
         <h3>
             ${semanticData.length} semantic events processed
         </h3>
     `
+
+    showProviderStep("synthetic")
+    showConsumerStep("consume")
+
+    } finally {
+        overlay.classList.remove("visible")
+    }
 }
 
 function showConsumerStep(step) {
@@ -424,67 +452,49 @@ function showConsumerStep(step) {
         .getElementById(step + "-step")
         .classList.add("active")
 
+    const asset = lastDerivedAssets ? lastDerivedAssets[0] : null
+
     const details = {
 
         consume: `
             <h3>Asset Consumption</h3>
-
             <p>
                 <strong>Purpose:</strong>
                 Receive the Telecare FHIR Asset from the dataspace.
             </p>
-
             <p>
                 <strong>Input:</strong>
                 HL7 FHIR Observation resources.
             </p>
-
             <p>
                 <strong>Result:</strong>
                 Asset available for analysis.
             </p>
         `,
 
-        analytics: `
+        analytics: asset ? `
             <h3>Analytics Processing</h3>
-
             <p>
-                <strong>Purpose:</strong>
-                Evaluate teleassistance events.
+                <strong>Caso analizado:</strong> ${asset.case_id}
             </p>
-
             <p>
-                <strong>Rules applied:</strong>
+                <strong>Eventos procesados:</strong> ${lastRawEvents ? lastRawEvents.length : "—"}
             </p>
-
-            <ul>
-                <li>Low oxygen saturation</li>
-                <li>Fall detection</li>
-                <li>Technical alarm evaluation</li>
-            </ul>
-
             <p>
-                <strong>Output:</strong>
-                HIGH risk level and priority 1.
+                <strong>Resultado:</strong>
+                <span class="risk-${asset.risk_level}">
+                    ${getRiskLabel(asset.risk_level)}
+                </span>
+                — Prioridad ${asset.priority}
             </p>
-        `,
+            <p>${asset.summary}</p>
+        ` : `<p style="color:#999">Genera un escenario para ver los datos.</p>`,
 
-        derived: `
+        derived: asset ? `
             <h3>Derived Asset Generation</h3>
-
-            <p>
-                <strong>Generated asset:</strong>
-            </p>
-
-            <pre>
-{
-  "caseId": "USR-0099",
-  "riskLevel": "HIGH",
-  "priority": 1,
-  "summary": "Preventive intervention recommended"
-}
-            </pre>
-        `
+            <p><strong>Activo derivado generado:</strong></p>
+            <pre>${JSON.stringify(asset, null, 2)}</pre>
+        ` : `<p style="color:#999">Genera un escenario para ver los datos.</p>`
     }
 
     document
@@ -502,74 +512,24 @@ function showProviderStep(step) {
         .getElementById(step + "-step")
         .classList.add("active")
 
-    const details = {
+    let content
 
-        synthetic: `
-<pre>{
-  "case_id": "USR-0099",
-  "semantic_type": "oxygen_saturation",
-  "observed_value": 89,
-  "unit": "%",
-  "severity": "high"
-}</pre>
-        `,
-
-        semantic: `
-<pre>{
-  "case_id": "USR-0099",
-  "semantic_type": "oxygen_saturation",
-  "observed_value": 89,
-  "unit": "%",
-  "severity": "high",
-  "aspect": {
-    "aspectName": "VitalSignsAspect"
-  },
-  "semantic_context": "Tractus-X Telecare Demo",
-  "semantic_version": "1.0.0",
-  "validation_status": "valid"
-}</pre>
-        `,
-
-        fhir: `
-<pre>{
-  "resourceType": "Observation",
-  "status": "final",
-  "code": {
-    "text": "oxygen_saturation"
-  },
-  "category": [
-    { "text": "physiological_observation" }
-  ],
-  "subject": {
-    "reference": "USR-0099"
-  },
-  "effectiveDateTime": "2026-06-15T08:42:00+00:00",
-  "valueQuantity": {
-    "value": 89,
-    "unit": "%"
-  },
-  "interpretation": [
-    { "text": "high" }
-  ],
-  "device": {
-    "display": "home_oximeter"
-  },
-  "note": [
-    { "text": "Low oxygen saturation detected" }
-  ]
-}</pre>
-        `
+    if (step === "synthetic" && lastRawEvents) {
+        content = `<pre>${JSON.stringify(lastRawEvents[0], null, 2)}</pre>`
+    } else if (step === "semantic" && lastSemanticEvents) {
+        content = `<pre>${JSON.stringify(lastSemanticEvents[0], null, 2)}</pre>`
+    } else if (step === "fhir" && lastFhirEvents) {
+        content = `<pre>${JSON.stringify(lastFhirEvents[0], null, 2)}</pre>`
+    } else {
+        content = `<p style="color:#999">Genera un escenario para ver los datos.</p>`
     }
 
     document
         .getElementById("provider-details")
-        .innerHTML = details[step]
+        .innerHTML = content
 }
 
 showDataspaceStep("asset")
-
 showConsumerStep("consume")
-
 showProviderStep("synthetic")
-
 loadAspectCatalog()

@@ -18,7 +18,7 @@
     {
       "label": "semantic-adapter :8001",
       "type": "shell",
-      "command": "${workspaceFolder}\\.venv\\Scripts\\Activate.ps1; python -m uvicorn app:app --reload --port 8001",
+      "command": "${workspaceFolder}\\.venv\\Scripts\\Activate.ps1; python -m uvicorn app:app --reload --reload-include='*.json' --port 8001",
       "options": {
         "cwd": "${workspaceFolder}\\semantic-adapter"
       },
