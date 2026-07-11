@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Tractus-X Semantic Data Space Demonstrator</title>
+    <title>Demostrador del Espacio de Datos Semántico Tractus-X</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
@@ -15,11 +15,11 @@
         </div>
     </div>
 
-    <h1>Tractus-X Semantic Data Space Demonstrator</h1>
+    <h1>Demostrador del Espacio de Datos Semántico Tractus-X</h1>
 
     <p class="subtitle">
-        Semantic interoperability demonstration based on
-        Tractus-X concepts and HL7 FHIR transformation.
+        Demostración de interoperabilidad semántica basada en los
+        conceptos de Tractus-X y la transformación a HL7 FHIR.
     </p>
 
     <div class="scenario-selector">
@@ -41,7 +41,7 @@
 
     <div class="organization-block">
 
-        <h2>Provider Organization</h2>
+        <h2>Organización Proveedora (Entidad A)</h2>
 
         <div class="pipeline">
 
@@ -50,7 +50,7 @@
     class="step provider-step"
     onclick="showProviderStep('synthetic')"
 >
-    Synthetic Event
+    Evento Sintético
 </div>
 
 <div class="arrow">→</div>
@@ -60,7 +60,7 @@
     class="step provider-step"
     onclick="showProviderStep('semantic')"
 >
-    Semantic Enrichment
+    Enriquecimiento Semántico
 </div>
 
 <div class="arrow">→</div>
@@ -70,7 +70,7 @@
     class="step provider-step"
     onclick="showProviderStep('fhir')"
 >
-    FHIR Transformation
+    Transformación FHIR
 </div>
 
         </div>
@@ -83,7 +83,7 @@
 
     <div class="provider-column">
 
-        <h3>Case Overview</h3>
+        <h3>Resumen del Caso</h3>
 
         <div id="case-overview"></div>
 
@@ -91,7 +91,7 @@
 
     <div class="provider-column">
 
-        <h3>Semantic Events Summary</h3>
+        <h3>Resumen de Eventos Semánticos</h3>
 
         <div id="semantic-events"></div>
 
@@ -110,7 +110,7 @@
     <div class="organization-block">
 
         <h2 class="catalog-toggle" onclick="toggleAspectCatalog()">
-            Aspect Catalog
+            Catálogo de Aspectos
             <span id="catalog-arrow" class="catalog-arrow">▶</span>
         </h2>
 
@@ -128,39 +128,39 @@
 
     <div class="organization-block dataspace">
 
-        <h2>Tractus-X Dataspace</h2>
+        <h2>Espacio de Datos Tractus-X</h2>
 
         <div class="dataspace-connectors">
 
-            <span>Provider Connector</span>
+            <span>Conector Proveedor (Entidad A)</span>
 
             <span>↓</span>
 
-            <span>Consumer Connector</span>
+            <span>Conector Consumidor (Entidad B)</span>
 
         </div>
 
         <div class="pipeline">
 
             <div id="asset-step" class="step edc" onclick="showDataspaceStep('asset')">
-                EDC Publication
+                Publicación EDC
             </div>
 
             <div id="catalog-step" class="step edc" onclick="showDataspaceStep('catalog')">
-                Catalog Discovery
+                Descubrimiento de Catálogo
             </div>
 
             <div id="contract-step" class="step edc" onclick="showDataspaceStep('contract')">
-                Contract Negotiation
+                Negociación de Contrato
             </div>
 
             <div id="transfer-step" class="step edc" onclick="showDataspaceStep('transfer')">
-                Data Transfer
+                Transferencia de Datos
             </div>
 
         </div>
 
-        <h3>EDC Exchange Status</h3>
+        <h3>Estado del Intercambio EDC</h3>
 
         <div id="edc-controls">
             <button id="edc-next-button" onclick="advanceExchangeStep()" style="display:none"></button>
@@ -173,7 +173,7 @@
         <div class="step-details">
 
             <h4 class="catalog-toggle" onclick="toggleDataspaceDetails()">
-                Step Detail
+                Detalle del Paso
                 <span id="dataspace-details-arrow" class="catalog-arrow">▶</span>
             </h4>
 
@@ -193,7 +193,7 @@
 
     <div class="organization-block">
 
-        <h2>Consumer Organization</h2>
+        <h2>Organización Consumidora (Entidad B)</h2>
 
         <div class="pipeline">
 
@@ -202,7 +202,7 @@
     class="step consumer-step"
     onclick="showConsumerStep('consume')"
 >
-    Asset Consumption
+    Consumo del Activo
 </div>
 
 <div class="arrow">→</div>
@@ -212,7 +212,7 @@
     class="step consumer-step"
     onclick="showConsumerStep('analytics')"
 >
-    Analytics
+    Análisis
 </div>
 
 <div class="arrow">→</div>
@@ -222,7 +222,7 @@
     class="step consumer-step"
     onclick="showConsumerStep('derived')"
 >
-    Derived Asset
+    Activo Derivado
 </div>
 
         </div>
@@ -233,7 +233,7 @@
 
     <div class="consumer-column">
 
-        <h3>Analytics Summary</h3>
+        <h3>Resumen del Análisis</h3>
 
         <div id="analytics-summary" class="summary-card">
             <p style="color:#999">Genera un escenario para ver los datos.</p>
@@ -243,7 +243,7 @@
 
     <div class="consumer-column">
 
-        <h3>Derived Assets</h3>
+        <h3>Activos Derivados</h3>
 
         <div id="results"></div>
 

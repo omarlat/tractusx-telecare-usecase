@@ -5,14 +5,14 @@ meta {
 }
 
 post {
-  url: {{Bob}}/contractdefinitions
+  url: {{EntityA}}/contractdefinitions
   body: json
   auth: apikey
 }
 
 auth:apikey {
   key: X-Api-Key
-  value: {{Bob_Api_Key}}
+  value: {{EntityA_Api_Key}}
   placement: header
 }
 

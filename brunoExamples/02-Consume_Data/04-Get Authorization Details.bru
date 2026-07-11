@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: {{Alice}}/edrs/{{TRANSFER_PROCESS_ID}}/dataaddress?auto_refresh=true
+  url: {{EntityB}}/edrs/{{TRANSFER_PROCESS_ID}}/dataaddress?auto_refresh=true
   body: none
   auth: apikey
 }
@@ -16,7 +16,7 @@ params:query {
 
 auth:apikey {
   key: X-Api-Key
-  value: {{Alice_Api_Key}}
+  value: {{EntityB_Api_Key}}
   placement: header
 }
 

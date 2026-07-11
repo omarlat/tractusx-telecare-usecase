@@ -26,16 +26,16 @@ let currentRunId = null
 // + Consume_Data), usado tanto en el listado detallado de #dataspace-status
 // como al inspeccionar un paso concreto
 const STEP_LABELS = {
-    publish_data: "Publish Case Data",
-    ensure_asset: "Register Asset",
-    ensure_access_policy: "Create Access Policy",
-    ensure_usage_policy: "Create Usage Policy",
-    ensure_contract_definition: "Create Contract Definition",
-    request_catalog: "Discover Catalog",
-    negotiate_contract: "Negotiate Contract",
-    wait_for_edr: "Await Contract Agreement",
-    get_authorization: "Get Transfer Authorization",
-    fetch_data: "Fetch Data",
+    publish_data: "Publicar Datos del Caso",
+    ensure_asset: "Registrar Asset",
+    ensure_access_policy: "Crear Política de Acceso",
+    ensure_usage_policy: "Crear Política de Uso",
+    ensure_contract_definition: "Crear Definición de Contrato",
+    request_catalog: "Descubrir Catálogo",
+    negotiate_contract: "Negociar Contrato",
+    wait_for_edr: "Esperar Acuerdo de Contrato",
+    get_authorization: "Obtener Autorización de Transferencia",
+    fetch_data: "Descargar Datos",
 }
 
 // A qué tarjeta del pipeline EDC (los 4 pasos conceptuales ya existentes
@@ -60,9 +60,9 @@ const STEP_GROUP = {
 function getRiskLabel(riskLevel) {
 
     const labels = {
-        high: "HIGH RISK",
-        medium: "MEDIUM RISK",
-        low: "LOW RISK"
+        high: "RIESGO ALTO",
+        medium: "RIESGO MEDIO",
+        low: "RIESGO BAJO"
     }
 
     return labels[riskLevel] || riskLevel
@@ -73,13 +73,13 @@ function getRiskLabel(riskLevel) {
 function getAspectLabel(aspectName) {
 
     const labels = {
-        VitalSignsAspect: "Vital Signs",
-        TeleassistanceAlertAspect: "Teleassistance Alert",
-        TechnicalEventAspect: "Technical Event",
-        FunctionalStatusAspect: "Functional Status",
-        AnalyticalResultAspect: "Analytical Result",
-        CommonCaseAspect: "Common Case",
-        UnmappedEventAspect: "Unmapped Event"
+        VitalSignsAspect: "Signos Vitales",
+        TeleassistanceAlertAspect: "Alerta de Teleasistencia",
+        TechnicalEventAspect: "Evento Técnico",
+        FunctionalStatusAspect: "Estado Funcional",
+        AnalyticalResultAspect: "Resultado Analítico",
+        CommonCaseAspect: "Caso Común",
+        UnmappedEventAspect: "Evento No Mapeado"
     }
 
     return labels[aspectName] || aspectName
@@ -92,10 +92,10 @@ function getAspectLabel(aspectName) {
 function getEventDescription(eventType) {
 
     const descriptions = {
-        oxygen_saturation:      "Oxygen saturation below threshold",
-        fall_detected:          "Fall detected at home",
-        technical_alarm:        "Technical alarm reported by device",
-        functional_status_change: "Functional status change reported"
+        oxygen_saturation:      "Saturación de oxígeno por debajo del umbral",
+        fall_detected:          "Caída detectada en el domicilio",
+        technical_alarm:        "Alarma técnica reportada por el dispositivo",
+        functional_status_change: "Cambio de estado funcional reportado"
     }
 
     return descriptions[eventType] || eventType
@@ -212,32 +212,47 @@ async function loadAspectCatalog() {
 const STATIC_DATASPACE_DETAILS = {
 
     asset: `
-        <h3>EDC Publication</h3>
-        <p><strong>Purpose:</strong> Register the Telecare FHIR Asset.</p>
+        <h3>Publicación EDC</h3>
+        <p><strong>Propósito:</strong> Registrar el Telecare FHIR Asset.</p>
         <p><strong>Asset:</strong> telecare-fhir-asset</p>
-        <p><strong>Content Type:</strong> application/json</p>
+        <p><strong>Tipo de contenido:</strong> application/json</p>
     `,
 
     catalog: `
-        <h3>Catalog Discovery</h3>
-        <p><strong>Purpose:</strong> Discover assets available from the provider.</p>
+        <h3>Descubrimiento de Catálogo</h3>
+        <p><strong>Propósito:</strong> Descubrir los activos disponibles en Entidad A.</p>
         <p><strong>Endpoint:</strong> POST /catalog/request</p>
-        <p><strong>Result:</strong> Telecare FHIR Asset discovered.</p>
+        <p><strong>Resultado:</strong> Telecare FHIR Asset descubierto.</p>
     `,
 
     contract: `
-        <h3>Contract Negotiation</h3>
-        <p><strong>Purpose:</strong> Establish a data sharing agreement.</p>
+        <h3>Negociación de Contrato</h3>
+        <p><strong>Propósito:</strong> Establecer un acuerdo de intercambio de datos.</p>
         <p><strong>Endpoint:</strong> POST /edrs</p>
-        <p><strong>Result:</strong> Contract agreement created.</p>
+        <p><strong>Resultado:</strong> Acuerdo de contrato creado.</p>
     `,
 
     transfer: `
-        <h3>Data Transfer</h3>
-        <p><strong>Purpose:</strong> Transfer the asset to the consumer.</p>
+        <h3>Transferencia de Datos</h3>
+        <p><strong>Propósito:</strong> Transferir el activo a Entidad B.</p>
         <p><strong>Endpoint:</strong> GET /edrs/{id}/dataaddress</p>
-        <p><strong>Result:</strong> Asset successfully consumed.</p>
+        <p><strong>Resultado:</strong> Activo consumido correctamente.</p>
     `
+}
+
+
+// Etiqueta legible del estado de un paso del intercambio
+function getStepStatusLabel(status) {
+
+    const labels = {
+        created: "CREADO",
+        exists: "YA EXISTÍA",
+        error: "ERROR",
+        in_progress: "EN CURSO",
+        pending: "PENDIENTE"
+    }
+
+    return labels[status] || status.toUpperCase()
 }
 
 
@@ -263,10 +278,10 @@ function renderStepDetail(stepNames) {
             <div class="card">
                 <h3>${STEP_LABELS[name] || name}</h3>
                 <p class="${step.status === "error" ? "invalid" : "valid"}">
-                    ${step.status.toUpperCase()}
+                    ${getStepStatusLabel(step.status)}
                 </p>
-                ${step.request ? `<p><strong>Request</strong></p><pre>${JSON.stringify(step.request, null, 2)}</pre>` : ""}
-                ${step.response !== undefined ? `<p><strong>Response</strong></p><pre>${JSON.stringify(step.response, null, 2)}</pre>` : ""}
+                ${step.request ? `<p><strong>Petición</strong></p><pre>${JSON.stringify(step.request, null, 2)}</pre>` : ""}
+                ${step.response !== undefined ? `<p><strong>Respuesta</strong></p><pre>${JSON.stringify(step.response, null, 2)}</pre>` : ""}
             </div>
         `
     })
@@ -482,15 +497,15 @@ function renderConsumerResults(data) {
             <div class="card ${asset.risk_level}">
                 <h3>${asset.case_id}</h3>
                 <p>
-                    <strong>Risk level:</strong>
+                    <strong>Nivel de riesgo:</strong>
                     <span class="risk-${asset.risk_level}">
                         ${getRiskLabel(asset.risk_level)}
                     </span>
                 </p>
-                <p><strong>Priority:</strong> ${asset.priority}</p>
+                <p><strong>Prioridad:</strong> ${asset.priority}</p>
                 <p>${asset.summary}</p>
-                <p><strong>Generated at:</strong> ${asset.generated_at}</p>
-                <p><strong>Source:</strong> ${asset.source}</p>
+                <p><strong>Generado el:</strong> ${asset.generated_at}</p>
+                <p><strong>Fuente:</strong> ${asset.source}</p>
             </div>
         `
     })
@@ -509,8 +524,8 @@ function renderCaseOverview(semanticData, asset) {
 
     let html = `
         <div class="case-card ${asset ? "case-" + asset.risk_level : ""}">
-            <h2>Case ${caseId}</h2>
-            <p>Synthetic teleassistance monitoring case.</p>
+            <h2>Caso ${caseId}</h2>
+            <p>Caso sintético de monitorización de teleasistencia.</p>
             <ul>
     `
 
@@ -522,13 +537,13 @@ function renderCaseOverview(semanticData, asset) {
 
     if (asset) {
         html += `
-            <h4>Risk Assessment</h4>
+            <h4>Evaluación de Riesgo</h4>
             <p>${getRiskLabel(asset.risk_level)}</p>
-            <p><strong>Priority:</strong> ${asset.priority}</p>
+            <p><strong>Prioridad:</strong> ${asset.priority}</p>
         `
     } else {
         html += `
-            <h4>Risk Assessment</h4>
+            <h4>Evaluación de Riesgo</h4>
             <p style="color:#999">Pendiente: completa los pasos del espacio de datos para que Entidad B lo analice.</p>
         `
     }
@@ -588,7 +603,7 @@ async function generateScenario() {
                     <h3 class="event-icon" data-icon="${event.semantic_type}">${event.semantic_type}</h3>
                     <p>${getAspectLabel(event.aspect.aspectName)}</p>
                     <p class="${event.validation_status}">
-                        ${event.validation_status === "valid" ? "VALID" : "INVALID"}
+                        ${event.validation_status === "valid" ? "VÁLIDO" : "NO VÁLIDO"}
                     </p>
                     ${
                         event.validation_errors.length
@@ -604,7 +619,7 @@ async function generateScenario() {
         document.getElementById("semantic-events").innerHTML = semanticHtml
 
         document.getElementById("summary").innerHTML = `
-            <h3>${lastSemanticEvents.length} semantic events processed</h3>
+            <h3>${lastSemanticEvents.length} eventos semánticos procesados</h3>
         `
 
         document.getElementById("analytics-summary").innerHTML = `
@@ -657,14 +672,14 @@ function showConsumerStep(step) {
     const details = {
 
         consume: `
-            <h3>Asset Consumption</h3>
-            <p><strong>Purpose:</strong> Receive the Telecare FHIR Asset from the dataspace.</p>
-            <p><strong>Input:</strong> HL7 FHIR Observation resources.</p>
-            <p><strong>Result:</strong> Asset available for analysis.</p>
+            <h3>Consumo del Activo</h3>
+            <p><strong>Propósito:</strong> Recibir el Telecare FHIR Asset a través del espacio de datos.</p>
+            <p><strong>Entrada:</strong> Recursos HL7 FHIR Observation.</p>
+            <p><strong>Resultado:</strong> Activo disponible para su análisis.</p>
         `,
 
         analytics: asset ? `
-            <h3>Analytics Processing</h3>
+            <h3>Procesamiento Analítico</h3>
             <p><strong>Caso analizado:</strong> ${asset.case_id}</p>
             <p><strong>Eventos procesados:</strong> ${lastRawEvents ? lastRawEvents.length : "—"}</p>
             <p>
@@ -678,7 +693,7 @@ function showConsumerStep(step) {
         ` : `<p style="color:#999">Genera un escenario para ver los datos.</p>`,
 
         derived: asset ? `
-            <h3>Derived Asset Generation</h3>
+            <h3>Generación del Activo Derivado</h3>
             <p><strong>Activo derivado generado:</strong></p>
             <pre>${JSON.stringify(asset, null, 2)}</pre>
         ` : `<p style="color:#999">Genera un escenario para ver los datos.</p>`

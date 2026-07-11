@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{Alice}}/edrs
+  url: {{EntityB}}/edrs
   body: json
   auth: apikey
 }
@@ -16,7 +16,7 @@ headers {
 
 auth:apikey {
   key: X-Api-Key
-  value: {{Alice_Api_Key}}
+  value: {{EntityB_Api_Key}}
   placement: header
 }
 
@@ -30,12 +30,12 @@ body:json {
       }
     ],
     "@type": "ContractRequest",
-    "counterPartyAddress": "{{Bob_DSP}}/2025-1",
+    "counterPartyAddress": "{{EntityA_DSP}}/2025-1",
     "protocol": "dataspace-protocol-http:2025-1",
     "policy": {
       "@id": "{{OFFER_ID}}",
       "@type": "Offer",
-      "assigner": "{{Bob_DID}}",
+      "assigner": "{{EntityA_DID}}",
       "target": "{{ASSET_ID}}",
       "permission": [
         {

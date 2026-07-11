@@ -1,10 +1,6 @@
 # Configuración del espacio de datos: rutas y credenciales de los dos
-# participantes EDC de la demo. En el Tractus-X Umbrella desplegado (VPS)
-# estos conectores se llaman "Bob" (provider) y "Alice" (consumer) — ver
-# brunoExamples/collection.bru y docs/Umbrella-documentation.html — pero
-# aquí se nombran por su rol en el TFG: Entidad A (provider) y Entidad B
-# (consumer). Las URLs no cambian, solo la etiqueta con la que se refiere
-# a cada una en este código.
+# participantes EDC de la demo — Entidad A (provider) y Entidad B
+# (consumer) — ver brunoExamples/collection.bru.
 
 ENTITY_A = "http://dataprovider-controlplane.tx.test/management/v3"
 ENTITY_A_DSP = "http://dataprovider-controlplane.tx.test/api/v1/dsp"

@@ -17,8 +17,6 @@ Para el despliegue del Data Space (Tractus-X Umbrella en VPS) ver [README.md](RE
 
 Todos los servicios son APIs FastAPI independientes. El `semantic-adapter` y el `analytics` consumen los datos del `generator`. El `dataspace-connector` publica lo generado por `semantic-adapter` en el EDC de Entidad A y lo recupera vía el EDC de Entidad B; `analytics` analiza los datos recibidos por ese camino, no los de `semantic-adapter` directamente. La `demo-ui` presenta todo el flujo.
 
-En el Tractus-X Umbrella desplegado (VPS) estos dos conectores EDC se llaman "Bob" y "Alice" (ver `docs/Umbrella-documentation.html` / `brunoExamples/`) — Entidad A = Bob, Entidad B = Alice. 
-
 ---
 
 ## Requisitos previos

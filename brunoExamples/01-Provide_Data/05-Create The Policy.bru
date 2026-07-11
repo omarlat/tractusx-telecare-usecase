@@ -5,14 +5,14 @@ meta {
 }
 
 post {
-  url: {{Bob}}/policydefinitions
+  url: {{EntityA}}/policydefinitions
   body: json
   auth: apikey
 }
 
 auth:apikey {
   key: X-Api-Key
-  value: {{Bob_Api_Key}}
+  value: {{EntityA_Api_Key}}
   placement: header
 }
 
@@ -48,7 +48,7 @@ body:json {
                       {
                         "leftOperand": "BusinessPartnerNumber",
                         "operator": "isAnyOf",
-                        "rightOperand": ["{{Alice_BPN}}"]
+                        "rightOperand": ["{{EntityB_BPN}}"]
                       }
                       ]
                   }
