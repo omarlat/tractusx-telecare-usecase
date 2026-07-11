@@ -11,7 +11,7 @@
     <div id="loading-overlay">
         <div id="loading-box">
             <div id="loading-spinner"></div>
-            <p>Generando escenario...</p>
+            <p id="loading-text">Generando escenario...</p>
         </div>
     </div>
 
@@ -111,7 +111,7 @@
 
         <h2 class="catalog-toggle" onclick="toggleAspectCatalog()">
             Aspect Catalog
-            <span id="catalog-arrow">▶</span>
+            <span id="catalog-arrow" class="catalog-arrow">▶</span>
         </h2>
 
         <div id="aspect-catalog-content" class="catalog-hidden">
@@ -160,34 +160,25 @@
 
         </div>
 
-        <div class="step-details">
-
-            <div id="dataspace-details"></div>
-
-        </div>
-
         <h3>EDC Exchange Status</h3>
 
+        <div id="edc-controls">
+            <button id="edc-next-button" onclick="advanceExchangeStep()" style="display:none"></button>
+        </div>
+
         <div id="dataspace-status">
+            <p style="color:#999">Genera un escenario para preparar el intercambio con el EDC.</p>
+        </div>
 
-            <div class="exchange-card completed">
-                ✓ Asset Registered
-            </div>
+        <div class="step-details">
 
-            <div class="exchange-card completed">
-                ✓ Catalog Retrieved
-            </div>
+            <h4 class="catalog-toggle" onclick="toggleDataspaceDetails()">
+                Step Detail
+                <span id="dataspace-details-arrow" class="catalog-arrow">▶</span>
+            </h4>
 
-            <div class="exchange-card completed">
-                ✓ Contract Negotiated
-            </div>
-
-            <div class="exchange-card completed">
-                ✓ Transfer Completed
-            </div>
-
-            <div class="exchange-card completed">
-                ✓ Asset Consumed
+            <div id="dataspace-details-content" class="catalog-hidden">
+                <div id="dataspace-details"></div>
             </div>
 
         </div>
@@ -262,6 +253,7 @@
 
     </div>
 
+    <script src="/static/js/config.js"></script>
     <script src="/static/js/app.js"></script>
 </body>
 

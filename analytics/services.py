@@ -12,15 +12,22 @@ SEMANTIC_EVENTS_URL = (
 )
 
 
-# Obtiene los eventos semánticos, los agrupa por caso y genera un
-# DerivedAsset por caso con su clasificación de riesgo y prioridad.
+# Obtiene los eventos semánticos llamando directamente a semantic-adapter.
+# Solo para pruebas manuales (ver DEV.md); el flujo de la demo usa
+# classify_events() con los eventos recibidos vía el espacio de datos.
 def analyze_events():
 
     response = requests.get(
         SEMANTIC_EVENTS_URL
     )
 
-    semantic_events = response.json()
+    return classify_events(response.json())
+
+
+# Agrupa los eventos semánticos por caso y genera un DerivedAsset por
+# caso con su clasificación de riesgo y prioridad. Función pura: no le
+# importa de dónde vienen los eventos (llamada directa o vía EDC).
+def classify_events(semantic_events):
 
     # Agrupación por case_id para analizar cada caso de forma independiente
     grouped_cases = {}

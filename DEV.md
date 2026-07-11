@@ -13,8 +13,11 @@ Para el despliegue del Data Space (Tractus-X Umbrella en VPS) ver [README.md](RE
 | `semantic-adapter` | 8001 | Adaptador semántico: enriquece eventos y los serializa a HL7 FHIR |
 | `analytics` | 8002 | Motor de análisis: genera activos derivados a partir de los eventos |
 | `demo-ui` | 8003 | Interfaz web de demostración |
+| `dataspace-connector` | 8004 | Cliente EDC: publica el activo como Entidad A y lo consume como Entidad B a través del espacio de datos real |
 
-Todos los servicios son APIs FastAPI independientes. El `semantic-adapter` y el `analytics` consumen los datos del `generator`. La `demo-ui` los presenta.
+Todos los servicios son APIs FastAPI independientes. El `semantic-adapter` y el `analytics` consumen los datos del `generator`. El `dataspace-connector` publica lo generado por `semantic-adapter` en el EDC de Entidad A y lo recupera vía el EDC de Entidad B; `analytics` analiza los datos recibidos por ese camino, no los de `semantic-adapter` directamente. La `demo-ui` presenta todo el flujo.
+
+En el Tractus-X Umbrella desplegado (VPS) estos dos conectores EDC se llaman "Bob" y "Alice" (ver `docs/Umbrella-documentation.html` / `brunoExamples/`) — Entidad A = Bob, Entidad B = Alice. 
 
 ---
 
@@ -68,6 +71,7 @@ Cada servicio expone documentación interactiva automática (Swagger UI) en `/do
 | semantic-adapter | http://localhost:8001/docs |
 | analytics | http://localhost:8002/docs |
 | demo-ui | http://localhost:8003 |
+| dataspace-connector | http://localhost:8004/docs |
 
 ---
 
@@ -96,7 +100,22 @@ Escenarios disponibles: `low-oxygen`, `fall-alert`, `mixed-risk`.
 
 | Método | Ruta | Descripción |
 |---|---|---|
-| `GET` | `/derived-assets` | Activos derivados calculados a partir de los eventos |
+| `GET` | `/derived-assets` | Activos derivados calculados llamando directamente a semantic-adapter (solo pruebas manuales) |
+| `POST` | `/analyze` | Analiza el body `{"semantic_events": [...]}`; es lo que usa la demo con los eventos llegados vía EDC |
+
+### dataspace-connector (8004)
+
+Cliente EDC contra el Tractus-X Umbrella real (Entidad A = provider, Entidad B = consumer). IDs de asset/políticas/contrato fijos y reutilizados entre ejecuciones (ver `config.py`).
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `GET` | `/health` | Configuración cargada (rutas, credenciales enmascaradas) |
+| `POST` | `/provider/publish` | Publica el caso actual en el EDC de Entidad A (contenido + asset + políticas + contract definition), los 5 pasos de golpe. Solo pruebas manuales. |
+| `POST` | `/consumer/fetch` | Consume el activo desde Entidad B (catálogo → negociación → EDR → fetch), los 5 pasos de golpe. Solo pruebas manuales. |
+| `POST` | `/exchange/run` | Crea una ejecución guiada y reúne el payload a publicar; no ejecuta ningún paso EDC todavía |
+| `POST` | `/exchange/{run_id}/next` | Ejecuta en segundo plano el siguiente paso pendiente (uno por llamada) |
+| `GET` | `/exchange/{run_id}` | Estado del intercambio y detalle real (request/response, credenciales enmascaradas) de cada paso, más `next_step` |
+| `GET` | `/exchange/{run_id}/data` | El bundle `{semantic_events, fhir_events}` recibido vía EDC (404 si el run no existe, 409 si aún no ha terminado) |
 
 ---
 
@@ -106,5 +125,6 @@ Escenarios disponibles: `low-oxygen`, `fall-alert`, `mixed-risk`.
 2. Verificar los eventos brutos en `GET /events`
 3. Abrir http://localhost:8001/docs y consultar `GET /semantic-events` para ver el enriquecimiento semántico
 4. Consultar `GET /fhir-events` para ver la serialización FHIR
-5. Abrir http://localhost:8002/docs y consultar `GET /derived-assets` para ver el análisis
-6. Abrir http://localhost:8003 para ver la interfaz de demostración
+5. Abrir http://localhost:8004/docs y lanzar `POST /exchange/run`; luego `POST /exchange/{run_id}/next` repetidamente (uno por paso, 10 en total) para ver el intercambio real avanzar por el EDC del VPS (requiere conectividad a `*.tx.test`)
+6. Consultar `GET /exchange/{run_id}/data` para ver el bundle recibido, y `POST /analyze` en http://localhost:8002/docs con `{"semantic_events": [...]}` de ese bundle para ver el análisis
+7. Abrir http://localhost:8003 para ver la interfaz de demostración completa: un click genera el escenario y la adaptación semántica, y a partir de ahí cada paso del EDC se ejecuta con su propio click en el bloque "Tractus-X Dataspace"

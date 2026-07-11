@@ -8,6 +8,7 @@ app = FastAPI(
     title="Telecare Demo UI"
 )
 
+# Archivos estáticos (CSS, JS) servidos desde /static
 app.mount(
     "/static",
     StaticFiles(directory="static"),
@@ -19,6 +20,9 @@ templates = Jinja2Templates(
 )
 
 
+# Única ruta de la UI: devuelve el HTML de la demo.
+# Toda la lógica de presentación y las llamadas a los servicios
+# se realizan en el cliente (static/js/app.js)
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
 

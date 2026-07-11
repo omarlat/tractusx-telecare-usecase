@@ -58,12 +58,27 @@
       "problemMatcher": []
     },
     {
+      "label": "dataspace-connector :8004",
+      "type": "shell",
+      "command": "${workspaceFolder}\\.venv\\Scripts\\Activate.ps1; python -m uvicorn app:app --reload --port 8004",
+      "options": {
+        "cwd": "${workspaceFolder}\\dataspace-connector"
+      },
+      "presentation": {
+        "label": "dataspace-connector :8004",
+        "panel": "new",
+        "group": "telecare"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Start All Services",
       "dependsOn": [
         "generator :8000",
         "semantic-adapter :8001",
         "analytics :8002",
-        "demo-ui :8003"
+        "demo-ui :8003",
+        "dataspace-connector :8004"
       ],
       "dependsOrder": "parallel",
       "problemMatcher": []
