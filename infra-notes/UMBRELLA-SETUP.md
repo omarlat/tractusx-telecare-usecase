@@ -1,5 +1,7 @@
 # Tractus-X Umbrella Portal en Ubuntu 24.04 sobre VPS
 
+Este documento es una nota de infraestructura; para la visión general del proyecto ver el [README](../README.md).
+
 ## Objetivo
 
 Montar **Tractus-X Umbrella** en un **VPS con Ubuntu 24.04**, usando:

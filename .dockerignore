@@ -5,7 +5,6 @@ __pycache__/
 .env
 docs/
 brunoExamples/
-guacamole.md
-portalDataExchange.md
+infra-notes/
 README.md
 DEV.md

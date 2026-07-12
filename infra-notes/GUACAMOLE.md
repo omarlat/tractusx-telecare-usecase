@@ -1,5 +1,7 @@
 # Instalación de Apache Guacamole sobre Docker
 
+Nota de infraestructura sobre el acceso remoto al VPS; para la visión general del proyecto ver el [README](../README.md).
+
 ## Objetivo
 
 Desplegar una instancia funcional de Apache Guacamole utilizando Docker Compose y PostgreSQL como backend de autenticación, permitiendo el acceso remoto vía navegador a escritorios y terminales del VPS.

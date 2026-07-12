@@ -1,4 +1,6 @@
-# README - Extensión de Tractus-X Umbrella: Portal + Data Exchange
+# Extensión de Tractus-X Umbrella: Portal + Data Exchange
+
+Continuación de [UMBRELLA-SETUP.md](UMBRELLA-SETUP.md); para la visión general del proyecto ver el [README](../README.md).
 
 ## Objetivo
 

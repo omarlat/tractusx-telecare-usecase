@@ -5,7 +5,7 @@
 Levantar los 5 servicios del stack Python (`generator`, `semantic-adapter`,
 `analytics`, `demo-ui`, `dataspace-connector` — ver `DEV.md`) como
 contenedores Docker en el mismo VPS que ya aloja el Tractus-X Umbrella
-(ver `README.md`), y exponerlos con Nginx bajo un subdominio por servicio,
+(ver `infra-notes/UMBRELLA-SETUP.md`), y exponerlos con Nginx bajo un subdominio por servicio,
 para poder acceder a la demo sin depender de tener nada arrancado en local.
 
 Este documento describe los pasos a ejecutar **en el VPS**; no se ha
@@ -16,7 +16,7 @@ ejecutado nada de esto de forma remota al escribirlo.
 ## Prerrequisitos
 
 El VPS ya tiene Docker instalado (se usa como driver de Minikube, ver
-`README.md`). Falta comprobar el plugin `docker compose`:
+`infra-notes/UMBRELLA-SETUP.md`). Falta comprobar el plugin `docker compose`:
 
 ```bash
 docker compose version
@@ -83,7 +83,7 @@ docker compose logs -f <servicio>
 
 ## 4. Exponer con Nginx
 
-Mismo patrón que ya usa `README.md` para `*.tx.test`, pero apuntando a
+Mismo patrón que ya usa `infra-notes/UMBRELLA-SETUP.md` para `*.tx.test`, pero apuntando a
 `127.0.0.1` (los contenedores, en el propio VPS) en vez de a la IP de
 Minikube.
 
@@ -131,7 +131,7 @@ sudo systemctl reload nginx
 
 ## 5. Añadir los subdominios al `hosts` de las máquinas cliente
 
-Igual que ya se hizo para `*.tx.test` (ver `README.md`, sección "Hosts en
+Igual que ya se hizo para `*.tx.test` (ver `infra-notes/UMBRELLA-SETUP.md`, sección "Hosts en
 Windows"), añadir en el `hosts` de cada máquina desde la que se quiera
 acceder a la demo:
 
