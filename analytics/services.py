@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timezone
 
 import requests
@@ -7,7 +8,8 @@ from models import DerivedAsset
 
 # URL del semantic-adapter: el análisis parte de los eventos ya
 # enriquecidos semánticamente, no directamente del generator
-SEMANTIC_EVENTS_URL = (
+SEMANTIC_EVENTS_URL = os.environ.get(
+    "SEMANTIC_EVENTS_URL",
     "http://localhost:8001/semantic-events"
 )
 

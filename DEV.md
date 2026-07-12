@@ -1,7 +1,8 @@
 # Entorno de desarrollo local
 
 Este documento cubre la puesta en marcha del **stack Python** del caso de uso telecare en local.  
-Para el despliegue del Data Space (Tractus-X Umbrella en VPS) ver [README.md](README.md).
+Para el despliegue del Data Space (Tractus-X Umbrella en VPS) ver [README.md](README.md).  
+Para desplegar este mismo stack Python como contenedores Docker en el VPS ver [DEPLOY.md](DEPLOY.md).
 
 ---
 

@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.git/
+.env
+docs/
+brunoExamples/
+guacamole.md
+portalDataExchange.md
+README.md
+DEV.md

@@ -1,0 +1,76 @@
+services:
+
+  generator:
+    build:
+      context: .
+      dockerfile: generator/Dockerfile
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  semantic-adapter:
+    build:
+      context: .
+      dockerfile: semantic-adapter/Dockerfile
+    environment:
+      GENERATOR_URL: http://generator:8000/events
+    ports:
+      - "8001:8001"
+    depends_on:
+      - generator
+    restart: unless-stopped
+
+  analytics:
+    build:
+      context: .
+      dockerfile: analytics/Dockerfile
+    environment:
+      SEMANTIC_EVENTS_URL: http://semantic-adapter:8001/semantic-events
+    ports:
+      - "8002:8002"
+    depends_on:
+      - semantic-adapter
+    restart: unless-stopped
+
+  dataspace-connector:
+    build:
+      context: .
+      dockerfile: dataspace-connector/Dockerfile
+    environment:
+      SEMANTIC_ADAPTER_URL: http://semantic-adapter:8001
+      ENTITY_A: ${ENTITY_A:-http://dataprovider-controlplane.tx.test/management/v3}
+      ENTITY_A_DSP: ${ENTITY_A_DSP:-http://dataprovider-controlplane.tx.test/api/v1/dsp}
+      ENTITY_A_DATA_SERVER: ${ENTITY_A_DATA_SERVER:-http://dataprovider-submodelserver.tx.test}
+      ENTITY_A_BPN: ${ENTITY_A_BPN:-BPNL00000003AYRE}
+      ENTITY_A_DID: ${ENTITY_A_DID:-did:web:ssi-dim-wallet-stub.tx.test:BPNL00000003AYRE}
+      ENTITY_A_API_KEY: ${ENTITY_A_API_KEY:-TEST2}
+      ENTITY_B: ${ENTITY_B:-http://dataconsumer-1-controlplane.tx.test/management/v3}
+      ENTITY_B_BPN: ${ENTITY_B_BPN:-BPNL00000003AZQP}
+      ENTITY_B_DID: ${ENTITY_B_DID:-did:web:ssi-dim-wallet-stub.tx.test:BPNL00000003AZQP}
+      ENTITY_B_API_KEY: ${ENTITY_B_API_KEY:-TEST1}
+    ports:
+      - "8004:8004"
+    depends_on:
+      - semantic-adapter
+    restart: unless-stopped
+
+  demo-ui:
+    build:
+      context: .
+      dockerfile: demo-ui/Dockerfile
+    environment:
+      # URLs públicas: las consume el navegador del cliente, no los
+      # contenedores entre sí (por eso no son los nombres de servicio
+      # de Docker como en los demás bloques de este fichero)
+      GENERATOR_URL: ${PUBLIC_GENERATOR_URL:-http://localhost:8000}
+      SEMANTIC_ADAPTER_URL: ${PUBLIC_SEMANTIC_ADAPTER_URL:-http://localhost:8001}
+      ANALYTICS_URL: ${PUBLIC_ANALYTICS_URL:-http://localhost:8002}
+      DATASPACE_CONNECTOR_URL: ${PUBLIC_DATASPACE_CONNECTOR_URL:-http://localhost:8004}
+    ports:
+      - "8003:8003"
+    depends_on:
+      - generator
+      - semantic-adapter
+      - analytics
+      - dataspace-connector
+    restart: unless-stopped

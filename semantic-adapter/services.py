@@ -1,3 +1,4 @@
+import os
 import requests
 import json
 from pathlib import Path
@@ -10,7 +11,10 @@ from models import (
 )
 
 
-GENERATOR_URL = "http://localhost:8000/events"
+GENERATOR_URL = os.environ.get(
+    "GENERATOR_URL",
+    "http://localhost:8000/events"
+)
 
 BASE_PATH = Path(__file__).parent
 
